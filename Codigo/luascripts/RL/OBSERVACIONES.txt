@@ -1,0 +1,30 @@
+Tiene sentido actualizar cuando no cambie de estado?? Tener en cuenta un estado no es algo discreto, es decir cambio de estado con probabilidad muy baja
+	Consideraciones:
+		Si no cambio de estado =>   x+1 == x   ==> gamma*P(x+1)-P(x) = -(1-gamma)P(x) := -dP(x) < 0
+			= > P(x) = (1+ errorCritico) P = P + (r-dP) = r + (1-d)P
+			
+
+			
+			
+Actualizar trazas antes o despues de actualizar estados??
+	Antes creo:
+		PRO: se actualiza estado actual apenas llego a el
+		CON: el error que calculo realmente es el error del estado anterior
+		
+		
+No se puede aprender ruta a varios lugares, se quedaria trancado en uno solo.
+		
+===============
+ACTOR CRITIC
+reward se piensa como obtenido de tomar accion A en estado X,
+no como consecuencia de llegar al estado X+1
+esto implica la traza se realiza luego de actualizar la politica
+
+CRITIC implements VALUE FUNCTION
+V(s_t,t+1) = r_(t+1) + gamma*V(s_(t+1),t)
+delta_t = V(s_t,t+1) - V(s_t,t) = r_(t+1) + gamma*V(s_(t+1),t) - V(s_t,t)
+PREFERENCIA: p(s_t,a_t) <-- p(s_t,a_t) + beta*delta_t  (solo actualizo una accion)
+
+traces for actor critic
+traza para pares estado accion
+p(s,a) <-- p(s,a) + beta*delta*e(s,a)

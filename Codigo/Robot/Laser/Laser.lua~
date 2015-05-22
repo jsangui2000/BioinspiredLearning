@@ -1,0 +1,7 @@
+local Laser = {}
+
+Laser.getDistance = function()
+	
+end
+
+return Laser

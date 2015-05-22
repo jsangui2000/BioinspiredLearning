@@ -1,0 +1,56 @@
+local socket = require "socket"
+
+local TCPController = {}
+	
+TCPController.init = function (side)
+	if side == "robot" then
+		TCPController.server = assert(socket.bind("*",10001))
+		TCPController.tcp = TCPController.server:accept()
+	elseif side == "terminal" then
+		local host, port = "robot.local", 10001
+		TCPController.tcp = assert(socket.tcp())
+		TCPController.tcp:connect(host, port)
+		print ("Vamos a escribir terminal")
+		print (TCPController.tcp)
+	else
+		assert(false,'error, no existe dispositivo')
+	end
+end
+
+
+TCPController.split = function (line)
+	local ans = {}
+	for s in string.gmatch(line,"([^#]+)") do
+		ans[#ans+1] = s
+	end
+	return ans
+end
+
+
+-- El formato es: param 1 # param 2 # param 3 # ... param n 
+TCPController.send = function(...)
+	local args = {...}
+	TCPController.tcp:send(table.concat(args, "#") .. "\n")
+end
+
+
+TCPController.receive = function()
+	local line = TCPController.tcp:receive()
+	local params = TCPController.split (line)
+	return params
+end
+
+
+-- El formato es: param 1 # param 2 # param 3 # ... param n # fun
+TCPController.receiveFunction = function ()
+	local params = TCPController.receive()
+	local fun = params[#params]
+	params[#params] = nil
+	return fun, params
+end
+
+TCPController.close = function ()
+	TCPController.client:close()
+end
+
+return TCPController
